@@ -1,0 +1,7 @@
+node_modules/
+build/
+dist/
+.nango/*
+!.nango/.gitkeep
+.env
+.env.local

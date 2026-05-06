@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>HubSpot Contacts</title>
+        <link rel="stylesheet" href="/styles.css" />
+    </head>
+    <body>
+        <header>
+            <div class="container header-row">
+                <div>
+                    <h1>HubSpot Contacts</h1>
+                    <p class="subtitle">
+                        Powered by Nango — connect once, then watch the cache update via webhooks.
+                    </p>
+                </div>
+                <div id="header-actions" class="sync-controls hidden">
+                    <span id="connection-pill" class="pill muted" title="">Connected</span>
+                    <button id="sync-btn" class="btn btn-primary" type="button">Sync now</button>
+                    <button id="disconnect-btn" class="btn btn-link" type="button" title="Forget this connection">
+                        Disconnect
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+            <div id="banner" class="banner hidden"></div>
+
+            <!-- Disconnected state -->
+            <section id="connect-screen" class="connect-screen">
+                <div class="connect-card">
+                    <div class="connect-icon">🔌</div>
+                    <h2>Connect your HubSpot account</h2>
+                    <p>
+                        Authorize HubSpot through Nango. Your contacts sync into Nango's cache and
+                        appear here. Webhooks push every change in real time — no polling, no rate limits.
+                    </p>
+                    <button id="connect-btn" class="btn btn-primary btn-large" type="button">
+                        Connect HubSpot
+                    </button>
+                    <p id="connect-error" class="connect-error hidden"></p>
+                </div>
+            </section>
+
+            <!-- Connected state -->
+            <section id="contacts-screen" class="hidden">
+                <div class="stats-row">
+                    <div class="stat">
+                        <div class="stat-label">Contacts in cache</div>
+                        <div class="stat-value" id="stat-total">—</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Last webhook</div>
+                        <div class="stat-value" id="stat-last-webhook">never</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Realtime stream</div>
+                        <div class="stat-value" id="stat-stream">connecting…</div>
+                    </div>
+                </div>
+
+                <div class="layout">
+                    <div class="layout-main">
+                        <div class="toolbar">
+                            <input
+                                id="search-input"
+                                type="search"
+                                placeholder="Search by name, email, company…"
+                                autocomplete="off"
+                            />
+                            <span id="record-count" class="muted">—</span>
+                        </div>
+
+                        <div class="card">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Job title</th>
+                                        <th>Company</th>
+                                        <th class="col-modified">Last modified</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contacts-tbody"></tbody>
+                            </table>
+                            <div id="empty-state" class="state hidden"></div>
+                            <div id="loading-state" class="state">Loading contacts…</div>
+                        </div>
+                    </div>
+
+                    <aside class="layout-side">
+                        <div class="side-header">
+                            <h3>Webhooks</h3>
+                            <span id="webhook-count" class="muted">0</span>
+                        </div>
+                        <div id="webhook-list" class="webhook-list">
+                            <div class="webhook-empty muted">
+                                Waiting for webhooks. Click "Sync now" or wait for the scheduled run.
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </main>
+
+        <script type="module" src="/app.js"></script>
+    </body>
+</html>
