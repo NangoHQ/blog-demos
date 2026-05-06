@@ -18,6 +18,10 @@ const MODEL = 'HubspotContact';
 const SYNC_NAME = 'fetch-contacts';
 const PAGE_LIMIT = 100;
 const WEBHOOK_HISTORY_LIMIT = 25;
+// On webhook and initial load, only pull a small slice of records so the demo stays snappy
+// even on accounts with tens of thousands of contacts. The "CONTACTS IN CACHE" stat reflects
+// the real Nango cache size (computed from webhook deltas), not what we've loaded into memory.
+const MAX_PAGES_PER_FETCH = 5;
 
 if (!NANGO_SECRET_KEY) {
     console.error('Missing NANGO_SECRET_KEY (or NANGO_SECRET_KEY_DEV). Copy .env.example to .env and fill it in.');
@@ -42,7 +46,9 @@ function getState(connectionId) {
     if (!state) {
         state = {
             records: new Map(),
-            lastCursor: null,
+            // totalCount is the real Nango cache size for this connection. We accumulate it
+            // from webhook responseResults (added - deleted). It is NOT state.records.size,
+            // which only tracks how many records the demo has pulled into memory.
             totalCount: 0,
             webhookHistory: [],
             sseClients: new Set(),
@@ -171,13 +177,22 @@ app.post('/api/webhooks/nango', async (req, res) => {
         return;
     }
 
+    // Update the real Nango cache total from the webhook's responseResults deltas.
+    // This is what we display as "CONTACTS IN CACHE" in the UI. The records we pull
+    // into memory below are just a recent slice for the table.
+    const responseResults = payload.responseResults ?? {};
+    const addedCount = Number(responseResults.added ?? 0);
+    const deletedCount = Number(responseResults.deleted ?? 0);
+    state.totalCount = Math.max(0, state.totalCount + addedCount - deletedCount);
+
     try {
-        const changed = await fetchChanges(connectionId, state);
+        const changed = await fetchChanges(connectionId, payload.modifiedAfter);
         applyChanges(state, changed);
         broadcast(state, {
             type: 'records-changed',
             records: changed.map((r) => stripped(r)),
             totalCount: state.totalCount,
+            loadedCount: state.records.size,
             webhookId: receivedAt
         });
     } catch (err) {
@@ -218,7 +233,9 @@ async function ensureInitialized(connectionId) {
     if (state.initializing) return state.initializing;
 
     state.initializing = (async () => {
-        const records = await fetchAll(connectionId, null);
+        // Pull just a few pages on first load so the demo stays responsive on huge accounts.
+        // Subsequent webhooks bring in changed records as they happen.
+        const records = await fetchPages(connectionId, { maxPages: MAX_PAGES_PER_FETCH });
         for (const record of records) {
             applyRecord(state, record);
         }
@@ -234,17 +251,20 @@ async function ensureInitialized(connectionId) {
     return state;
 }
 
-async function fetchChanges(connectionId, state) {
-    return fetchAll(connectionId, state.lastCursor);
+async function fetchChanges(connectionId, modifiedAfter) {
+    // Use the webhook's modifiedAfter so we pull only what changed since the previous run,
+    // and cap the fetch at MAX_PAGES_PER_FETCH pages. On a 33k-record initial sync this means
+    // we display the first ~500 changed records instead of stalling on the full 33k.
+    return fetchPages(connectionId, { modifiedAfter, maxPages: MAX_PAGES_PER_FETCH });
 }
 
-async function fetchAll(connectionId, startCursor) {
-    let cursor = startCursor;
+async function fetchPages(connectionId, { modifiedAfter, maxPages }) {
+    let cursor = null;
     const results = [];
-    let safety = 0;
-    while (safety++ < 200) {
+    for (let page = 0; page < maxPages; page++) {
         const params = new URLSearchParams({ model: MODEL, limit: String(PAGE_LIMIT) });
         if (cursor) params.set('cursor', cursor);
+        if (modifiedAfter) params.set('modified_after', modifiedAfter);
 
         const url = `${NANGO_HOST}/records/?${params.toString()}`;
         const upstream = await fetch(url, {
@@ -268,10 +288,6 @@ async function fetchAll(connectionId, startCursor) {
         if (!data.next_cursor || batch.length === 0 || data.next_cursor === cursor) break;
         cursor = data.next_cursor;
     }
-    if (cursor) {
-        const state = connectionStates.get(connectionId);
-        if (state) state.lastCursor = cursor;
-    }
     return results;
 }
 
@@ -286,13 +302,11 @@ function applyRecord(state, record) {
     const action = record._nango_metadata?.last_action;
     const isDeleted = action === 'DELETED' || record._nango_metadata?.deleted_at != null;
     if (isDeleted) {
-        if (state.records.delete(record.id)) {
-            state.totalCount = Math.max(0, state.totalCount - 1);
-        }
+        // Don't touch state.totalCount here — it's the Nango cache total and is updated only
+        // from webhook responseResults deltas. state.records is the in-memory display slice.
+        state.records.delete(record.id);
     } else {
-        const existed = state.records.has(record.id);
         state.records.set(record.id, record);
-        if (!existed) state.totalCount += 1;
     }
 }
 
@@ -300,8 +314,8 @@ function snapshot(state) {
     return {
         records: [...state.records.values()].map(stripped),
         totalCount: state.totalCount,
-        webhookHistory: state.webhookHistory,
-        lastCursor: state.lastCursor
+        loadedCount: state.records.size,
+        webhookHistory: state.webhookHistory
     };
 }
 

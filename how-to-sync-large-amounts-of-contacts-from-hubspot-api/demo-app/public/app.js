@@ -5,7 +5,11 @@ const STORAGE_KEY = 'nango.demo.connection';
 const state = {
     connection: loadConnection(),
     contacts: new Map(),
+    // totalCount is the real Nango cache size for the connection (computed server-side from
+    // webhook responseResults deltas). loadedCount is how many records this browser has
+    // pulled from Nango — typically a small slice of the most recently changed records.
     totalCount: 0,
+    loadedCount: 0,
     webhookHistory: [],
     isConnecting: false,
     isSyncing: false,
@@ -72,7 +76,8 @@ async function loadInitialState() {
         }
         const data = await res.json();
         state.contacts = new Map((data.records ?? []).map((r) => [r.id, r]));
-        state.totalCount = data.totalCount ?? state.contacts.size;
+        state.totalCount = data.totalCount ?? 0;
+        state.loadedCount = data.loadedCount ?? state.contacts.size;
         state.webhookHistory = data.webhookHistory ?? [];
         clearBanner();
         renderAll();
@@ -117,7 +122,7 @@ function handleStreamMessage(msg) {
             addWebhook(msg.payload);
             return;
         case 'records-changed':
-            applyChanges(msg.records ?? [], msg.totalCount ?? state.totalCount);
+            applyChanges(msg.records ?? [], msg.totalCount ?? state.totalCount, msg.loadedCount);
             attachWebhookFetchResult(msg.webhookId, msg.records ?? []);
             return;
         case 'sync-error':
@@ -152,7 +157,7 @@ function attachWebhookError(webhookId, message) {
     renderWebhooks();
 }
 
-function applyChanges(records, totalCount) {
+function applyChanges(records, totalCount, loadedCount) {
     state.flashIds = new Set();
     for (const record of records) {
         const isDeleted = record.last_action === 'DELETED';
@@ -164,6 +169,7 @@ function applyChanges(records, totalCount) {
         }
     }
     state.totalCount = totalCount;
+    state.loadedCount = typeof loadedCount === 'number' ? loadedCount : state.contacts.size;
     renderTotalCount();
     renderContacts();
     setTimeout(() => {
@@ -231,6 +237,7 @@ function disconnect() {
     state.connection = null;
     state.contacts = new Map();
     state.totalCount = 0;
+    state.loadedCount = 0;
     state.webhookHistory = [];
     showConnectScreen();
 }
@@ -273,7 +280,11 @@ function renderAll() {
 }
 
 function renderTotalCount() {
-    els.statTotal.textContent = state.totalCount.toLocaleString();
+    // totalCount is the Nango cache size derived from webhook deltas. Before the first
+    // sync-completion webhook arrives we fall back to whatever we've loaded so the stat
+    // is never lower than the visible record count.
+    const total = Math.max(state.totalCount ?? 0, state.loadedCount ?? state.contacts.size);
+    els.statTotal.textContent = total.toLocaleString();
 }
 
 function renderContacts() {
@@ -288,9 +299,17 @@ function renderContacts() {
           })
         : all;
 
-    els.recordCount.textContent = state.searchQuery
-        ? `${filtered.length.toLocaleString()} of ${all.length.toLocaleString()} loaded`
-        : `${all.length.toLocaleString()} loaded`;
+    const loaded = all.length;
+    const total = Math.max(state.totalCount ?? 0, loaded);
+    if (state.searchQuery) {
+        els.recordCount.textContent = total > loaded
+            ? `${filtered.length.toLocaleString()} of ${loaded.toLocaleString()} loaded (cache: ${total.toLocaleString()})`
+            : `${filtered.length.toLocaleString()} of ${loaded.toLocaleString()} loaded`;
+    } else {
+        els.recordCount.textContent = total > loaded
+            ? `${loaded.toLocaleString()} of ${total.toLocaleString()} loaded (most recently changed)`
+            : `${loaded.toLocaleString()} loaded`;
+    }
 
     if (all.length === 0) {
         els.emptyState.textContent =
