@@ -1,0 +1,31 @@
+# ---- Dependencies ----
+node_modules/
+
+# ---- Secrets / environment ----
+# Never commit credentials. Nango secret keys live here.
+.env
+.env.*
+!.env.example
+
+# ---- Build / compiled output ----
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+
+# ---- Logs ----
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ---- OS / editor cruft ----
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Nango compile cache — keep the .nango folder marker (.gitkeep), ignore the generated registry
+**/.nango/*
+!**/.nango/.gitkeep

@@ -1,0 +1,17 @@
+{
+  "name": "lumin-notion-demo-backend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Scaffold API that will hold the Nango secret key: mints Connect sessions and triggers the Notion sync + create-page action. Stubbed until the integration is built with the Nango skill.",
+  "scripts": {
+    "dev": "node --watch --env-file=.env server.js",
+    "start": "node --env-file=.env server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.102.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@nangohq/node": "latest",
+    "express": "^4.21.2"
+  }
+}

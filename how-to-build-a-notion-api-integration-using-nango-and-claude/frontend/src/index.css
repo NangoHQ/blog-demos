@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+/* ────────────────────────────────────────────────────────────────────────
+   LUMIN — "Editorial Workspace"
+
+   A content/docs product that *integrates* Notion (via Nango). The aesthetic
+   is deliberately editorial — warm paper, ink text, a single clay accent, a
+   serif display face (Fraunces) over a precise grotesk (Manrope) — so it reads
+   as its own product, not a Notion clone and not a generic violet SaaS.
+   ──────────────────────────────────────────────────────────────────────── */
+@theme {
+  --font-sans:
+    "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Clay / ember — the one accent. Warm, editorial, premium. */
+  --color-clay-50: #fbf3ef;
+  --color-clay-100: #f6e3da;
+  --color-clay-200: #ecc6b4;
+  --color-clay-300: #e0a188;
+  --color-clay-400: #d17a57;
+  --color-clay-500: #c25a35;
+  --color-clay-600: #a8431f;
+  --color-clay-700: #8a3417;
+  --color-clay-800: #6e2a14;
+  --color-clay-900: #5a2413;
+
+  /* Warm paper canvas — the surface everything sits on. */
+  --color-paper: #f7f4ef;
+  --color-paper-deep: #efe9e1;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background-color: var(--color-paper);
+  color: var(--color-stone-900);
+}
+
+/* Memorable anchor #1: a faint paper grain over the whole canvas. Subtle
+   enough to never fight the content, present enough to feel like stock. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* Display face wants tighter tracking and a touch of optical weight. */
+.font-display {
+  letter-spacing: -0.01em;
+}
+
+/* Warm, thin scrollbars to match the paper chrome. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-stone-300) transparent;
+}
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-stone-300);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+/* One restrained entrance, reused across surfaces. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-rise {
+  animation: rise 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
