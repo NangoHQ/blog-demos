@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+node_modules/
+build/
+.nango/*
+!.nango/.gitkeep
+private-*
+.DS_Store

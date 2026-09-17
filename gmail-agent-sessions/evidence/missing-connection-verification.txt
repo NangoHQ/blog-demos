@@ -1,0 +1,10 @@
+LIVE VERIFICATION
+Command: node --env-file=.env verify.mjs --missing-connection
+
+Control: probe executed when allowed.
+Restricted session: probe excluded.
+Terminated session: HTTP 401.
+Missing connection: connected=false; client setup rejected.
+
+No Gmail or model API calls. No existing connection was changed.
+Expiry was not included in this run.

@@ -1,0 +1,5 @@
+Control: probe executed when allowed.
+Restricted session: probe excluded.
+Terminated session: HTTP 401.
+Missing connection: connected=false; client setup rejected.
+Expired session: HTTP 401.
