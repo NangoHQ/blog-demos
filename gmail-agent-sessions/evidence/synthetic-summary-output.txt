@@ -1,0 +1,10 @@
+{"tool":"read_inbox","arguments":{}}
+{"message_count":5}
+- The staging build passed all checks; production deployment has not started.
+- A request to clarify reconnect instructions for Gmail after the Google grant expires, with no deadline given.
+- Test equipment delivery is scheduled for September 21, 2026; no action required.
+- Design review is scheduled for 14:00 UTC on September 17, 2026; bring updated settings-page mockup.
+- Review the staging release checklist by September 18, 2026, and reply with any missing rollback steps.
+
+Only subjects and snippets were read.
+{"session_terminated":true}
