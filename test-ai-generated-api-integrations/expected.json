@@ -1,0 +1,6 @@
+{
+  "total": 250,
+  "emails": ["contact-001@example.com", "...", "contact-250@example.com"],
+  "contactsWithoutPhone": 5,
+  "fields": ["id", "firstName", "lastName", "email", "phone", "jobTitle", "createdAt", "updatedAt"]
+}
