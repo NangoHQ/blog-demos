@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HubSpot Contacts</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f7f7f7;
+      color: #222;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+    }
+
+    #count {
+      font-size: 18px;
+      margin-bottom: 24px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f1f1;
+    }
+
+    .error {
+      color: #b00020;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>HubSpot Contacts</h1>
+    <p id="count">Loading contacts...</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Job Title</th>
+        </tr>
+      </thead>
+      <tbody id="contacts"></tbody>
+    </table>
+  </div>
+
+  <script>
+    async function loadContacts() {
+      const countEl = document.getElementById('count');
+      const contactsEl = document.getElementById('contacts');
+
+      try {
+        const response = await fetch('/api/contacts');
+
+        if (!response.ok) {
+          throw new Error('Failed to load contacts');
+        }
+
+        const data = await response.json();
+
+        countEl.textContent = `${data.count} contacts synced`;
+
+        contactsEl.innerHTML = data.contacts.map((contact) => {
+          const name = [contact.firstName, contact.lastName]
+            .filter(Boolean)
+            .join(' ');
+
+          return `
+            <tr>
+              <td>${name || '—'}</td>
+              <td>${contact.email || '—'}</td>
+              <td>${contact.phone || '—'}</td>
+              <td>${contact.jobTitle || '—'}</td>
+            </tr>
+          `;
+        }).join('');
+      } catch (error) {
+        countEl.textContent = 'Failed to load contacts';
+        countEl.className = 'error';
+        console.error(error);
+      }
+    }
+
+    loadContacts();
+  </script>
+</body>
+</html>
