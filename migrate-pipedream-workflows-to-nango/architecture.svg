@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="700" viewBox="0 0 920 700" role="img" aria-labelledby="title desc">
+<title id="title">GitHub issue to support record and Slack notification</title>
+<desc id="desc">GitHub sends an issue event to Nango. Nango verifies and attributes it. The application verifies the Nango signature, resolves the customer, stores the issue and notification in one transaction, and runs a worker. The worker calls an owned Nango Slack action with the customer's connection. The action sends to Slack and returns the result to the worker.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#526475"/></marker></defs>
+<rect width="920" height="700" fill="white"/>
+<g font-family="Arial, Helvetica, sans-serif" fill="#172d3a">
+<rect x="260" y="25" width="400" height="65" rx="12" fill="#f5f7f9" stroke="#b9c6ce"/>
+<text x="460" y="64" text-anchor="middle" font-size="21" font-weight="700">Customer's GitHub repository</text>
+<rect x="40" y="135" width="350" height="425" rx="16" fill="#f2f8fc" stroke="#8faec2"/>
+<rect x="460" y="135" width="420" height="425" rx="16" fill="#f5faf6" stroke="#99b7a1"/>
+<text x="65" y="172" font-size="22" font-weight="700">Nango</text>
+<text x="485" y="172" font-size="22" font-weight="700">Your application</text>
+<g fill="white" stroke="#8faec2">
+<rect x="65" y="210" width="300" height="80" rx="10"/>
+<rect x="65" y="435" width="300" height="80" rx="10"/>
+</g>
+<g fill="white" stroke="#99b7a1">
+<rect x="485" y="210" width="370" height="80" rx="10"/>
+<rect x="485" y="320" width="370" height="85" rx="10"/>
+<rect x="485" y="435" width="370" height="80" rx="10"/>
+</g>
+<g font-size="18" text-anchor="middle">
+<text x="215" y="242">Verify provider webhook</text><text x="215" y="268">Attribute and forward event</text>
+<text x="670" y="242">Verify Nango signature</text><text x="670" y="268">Resolve customer and repository</text>
+<text x="670" y="351" font-weight="700">One database transaction</text><text x="670" y="379">Record event, issue, and notification</text>
+<text x="670" y="467">Worker: apply delivery policy</text><text x="670" y="493">Record result or uncertain outcome</text>
+<text x="215" y="467">Owned Slack action</text><text x="215" y="493">Use customer's connection</text>
+</g>
+<rect x="260" y="610" width="400" height="65" rx="12" fill="#f5f7f9" stroke="#b9c6ce"/>
+<text x="460" y="649" text-anchor="middle" font-size="21" font-weight="700">Customer's Slack channel</text>
+<g fill="none" stroke="#526475" stroke-width="2" marker-end="url(#arrow)">
+<path d="M460 90 V112 H215 V210"/>
+<path d="M365 250 H485"/>
+<path d="M670 290 V320"/>
+<path d="M670 405 V435"/>
+<path d="M485 485 H365"/>
+<path d="M365 452 H485" stroke-dasharray="5 4"/>
+<path d="M215 515 V585 H460 V610"/>
+</g>
+<text x="425" y="475" text-anchor="middle" font-size="13" fill="#526475">Call</text>
+<text x="425" y="442" text-anchor="middle" font-size="13" fill="#526475">Result</text>
+</g>
+</svg>

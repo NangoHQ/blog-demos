@@ -1,0 +1,24 @@
+{
+  "name": "pipedream-to-nango-migration-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.10.0"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "demo": "node scripts/demo.mjs",
+    "start": "node --env-file=.env src/server.mjs",
+    "worker": "node --env-file=.env src/run-worker.mjs",
+    "routes": "node --env-file=.env scripts/load-routes.mjs",
+    "inspect": "node --env-file=.env scripts/inspect.mjs",
+    "compile": "nango compile --no-dependency-update --no-telemetry",
+    "dashboard": "node --env-file=.env src/dashboard.mjs"
+  },
+  "dependencies": {
+    "@nangohq/node": "0.71.14",
+    "nango": "0.71.14",
+    "zod": "4.6.7"
+  }
+}

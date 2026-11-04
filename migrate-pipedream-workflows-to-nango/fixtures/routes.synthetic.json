@@ -1,0 +1,11 @@
+[
+  {
+    "customerId": "synthetic_customer",
+    "githubIntegrationId": "github-app",
+    "githubConnectionId": "synthetic-github-connection",
+    "githubRepositoryId": "123456",
+    "slackIntegrationId": "slack",
+    "slackConnectionId": "synthetic-slack-connection",
+    "slackChannelId": "C123SYNTHETIC"
+  }
+]

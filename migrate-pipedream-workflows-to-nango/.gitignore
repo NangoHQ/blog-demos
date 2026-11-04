@@ -1,0 +1,6 @@
+.env
+routes.local.json
+data/
+dist/
+build/
+node_modules/

@@ -1,0 +1,17 @@
+{
+  "display_information": {
+    "name": "Migration Baseline Bot",
+    "description": "Tutorial issue notifications in the demo channel",
+    "background_color": "#ffffff"
+  },
+  "features": {
+    "bot_user": { "display_name": "Migration Baseline Bot", "always_online": false }
+  },
+  "oauth_config": { "scopes": { "bot": ["chat:write"] } },
+  "settings": {
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "is_hosted": false,
+    "token_rotation_enabled": false
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "forward",
+  "from": "github-app",
+  "providerConfigKey": "github-app",
+  "connectionId": "synthetic-github-connection",
+  "payload": {
+    "action": "opened",
+    "installation": { "id": 654321 },
+    "repository": { "id": 123456, "full_name": "example/migration-test" },
+    "issue": {
+      "id": 987654,
+      "number": 42,
+      "title": "Synthetic migration test",
+      "state": "open",
+      "updated_at": "2026-11-01T10:00:00Z"
+    }
+  }
+}

@@ -1,0 +1,133 @@
+[
+  {
+    "providerConfigKey": "slack",
+    "actions": [
+      {
+        "type": "action",
+        "description": "Post one migration notification, preserving definite rejections and uncertain outcomes.",
+        "endpoint": null,
+        "input": "ActionInput_slack_migrationsendmessage",
+        "name": "migration-send-message",
+        "output": [
+          "ActionOutput_slack_migrationsendmessage"
+        ],
+        "scopes": [
+          "chat:write"
+        ],
+        "usedModels": [
+          "ActionInput_slack_migrationsendmessage",
+          "ActionOutput_slack_migrationsendmessage"
+        ],
+        "version": "1.0.0",
+        "json_schema": {
+          "definitions": {
+            "ActionInput_slack_migrationsendmessage": {
+              "type": "object",
+              "properties": {
+                "channel_id": {
+                  "type": "string",
+                  "pattern": "^[CG][A-Z0-9]+$"
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4000
+                }
+              },
+              "required": [
+                "channel_id",
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "ActionOutput_slack_migrationsendmessage": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "const": "sent"
+                    },
+                    "channel": {
+                      "type": "string"
+                    },
+                    "ts": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "channel",
+                    "ts"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "const": "rate_limited"
+                    },
+                    "retryAfterSeconds": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 86400
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "retryAfterSeconds"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "const": "rejected"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "const": "uncertain"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        },
+        "features": []
+      }
+    ],
+    "syncs": [],
+    "onEventScripts": {
+      "post-connection-creation": [],
+      "pre-connection-deletion": [],
+      "validate-connection": []
+    }
+  }
+]

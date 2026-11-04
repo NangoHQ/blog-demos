@@ -1,0 +1,14 @@
+flowchart TD
+    GH["Customer's GitHub repository"]
+    subgraph N["Nango"]
+        WH["Verify provider webhook<br/>Attribute and forward event"]
+        SA["Owned Slack action<br/>Use customer's connection"]
+    end
+    subgraph APP["Your application"]
+        IN["Verify Nango signature<br/>Resolve customer and repository"]
+        DB["Transaction: record event<br/>Update issue and queue notification"]
+        WK["Worker: apply delivery policy<br/>Record result or uncertain outcome"]
+    end
+    SL["Customer's Slack channel"]
+    GH --> WH --> IN --> DB --> WK --> SA --> SL
+    SA -. "Result" .-> WK
