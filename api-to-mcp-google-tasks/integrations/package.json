@@ -1,0 +1,9 @@
+{
+  "name": "google-tasks-functions",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "zod": "4.6.7",
+    "nango": "0.72.4"
+  }
+}

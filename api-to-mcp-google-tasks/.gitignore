@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+integrations/dist/
+integrations/.nango/*
+!integrations/.nango/.gitkeep
+evidence/live-*.json
+integrations/build/
