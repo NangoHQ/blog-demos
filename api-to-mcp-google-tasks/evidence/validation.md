@@ -47,7 +47,7 @@ Raw live JSON is ignored because it can contain account identifiers and task dat
 ## Limits and outstanding checks
 
 - Agent Playground reads and custom creation/read-back also passed. Its observed policy used toolset="*", nango_proxy=true, existing pinned connections, and a one-hour expiry. It searched for tools, created Acme Playground after UI approval, and verified it with get-task. This does not validate the app's narrower policy.
-- Claude Code Management MCP setup commands were checked against official documentation, not executed as part of the captured run.
+- Codex built and tested the source using the Nango CLI, direct MCP client, and dashboard. Optional Codex Management MCP login and Nango skill installation are documented setup instructions, not steps executed in the captured run. Codex MCP command syntax was checked against the installed CLI and official OpenAI/Nango documentation.
 - The optional app-driven Connect/tag-selection path was not live-tested; the captured path uses a dashboard test connection.
 - Inclusive/exclusive date boundaries, ambiguous tag matches, and missing connections need separate live tests. The tested interior dates do not establish boundary behavior.
 - An empty date range and pagination were tested directly through MCP, not as additional product-model conversations.

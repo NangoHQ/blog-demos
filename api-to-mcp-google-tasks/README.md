@@ -1,6 +1,6 @@
 # Google Tasks API-to-MCP companion
 
-A Google Tasks agent built with Nango Agent Sessions and a custom discovery-preparation tool. `npm run starter` starts an agent without integrations. `npm start` runs the same interface with a server-created Nango Agent Session. The product agent uses OpenAI; Claude Code is the coding agent used to add/configure Nango.
+A Google Tasks agent built with Nango Agent Sessions and a custom discovery-preparation tool. `npm run starter` starts an agent without integrations. `npm start` runs the same interface with a server-created Nango Agent Session. The product agent uses OpenAI; Codex was used to build and test the integration with the Nango CLI and dashboard.
 
 **Verified November 12, 2026:** local tests and compilation, managed OAuth, model reads and custom-tool writes, provider read-back, live read-only denial, pagination, and an empty date range. See [evidence/validation.md](evidence/validation.md) for the exact scope and remaining checks. This is a local demonstration, not a production application.
 
@@ -24,16 +24,27 @@ npm run starter
 
 Open http://127.0.0.1:3610 and enter the demo username/password in the browser's authentication prompt. The starter answers through the model but has no integration tools. This app listens only on the loopback interface and rejects other Host headers. Do not expose it to the public network.
 
-## Set up Claude Code
+## Set up Codex
+
+Open this folder in Codex. The tutorial uses Codex to edit the source and run the Nango CLI commands below, with integration setup and Google consent in the dashboard.
+
+To install Nango's function-building skill, run this command and select Codex in the installer:
 
 ```bash
-claude mcp add --transport http nango-management --scope user https://mcp.nango.dev/mcp
-claude mcp login nango-management
 npx skills add NangoHQ/skills -s building-nango-functions
-claude mcp list
 ```
 
-Complete Nango authorization yourself. Ask the coding agent to list authorized environments, select `dev`, and create a Google Tasks integration with ID `google-tasks` using its Nango-managed OAuth app. See the [current setup docs](https://nango.dev/docs/getting-started/coding-agent-setup).
+Invoke the installed skill as `$building-nango-functions` in a Codex prompt. See the [Nango setup guide](https://nango.dev/docs/getting-started/coding-agent-setup) and [Codex skill documentation](https://learn.chatgpt.com/docs/build-skills).
+
+For optional direct Nango account management through MCP:
+
+```bash
+codex mcp add nango-management --url https://mcp.nango.dev/mcp
+codex mcp login nango-management
+codex mcp list
+```
+
+Complete OAuth authorization, then use `/mcp` in Codex to check the connection. Ask Codex to list accessible Nango environments and select `dev`. This optional setup follows the [Codex MCP reference](https://learn.chatgpt.com/docs/extend/mcp?surface=cli); the captured walkthrough used the dashboard and CLI path.
 
 ## Run the integrated agent with read tools
 
