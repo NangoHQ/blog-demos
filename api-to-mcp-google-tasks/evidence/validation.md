@@ -67,7 +67,7 @@ On November 13, a new checkout of commit 4daf279 passed npm ci, all six tests, c
 
 ## Playground read recording
 
-The November 13 user recording shows the actual Playground prompt, successful List Tasklists and List Tasks calls, and seven incomplete tasks for November 9–15. It does not show expanded call arguments or the session policy. The article GIF trims idle time, preserves the full 3448×1940 frame, and uses 2× playback. A native-resolution lossless MP4 export is retained alongside it.
+The November 13 user recording shows the actual Playground prompt, successful List Tasklists and List Tasks calls, and seven incomplete tasks for November 9–15. It does not show expanded call arguments or the session policy. The article GIF trims idle time, preserves the full 3448×1940 frame, and uses 2× playback. A native-resolution lossless MP4 export is retained separately from the publication assets.
 
 ## Playground custom-tool recording
 
@@ -76,3 +76,7 @@ The November 13 recording shows the user approving create-customer-discovery-pre
 ## Connection and OAuth scope evidence
 
 The November 13 app-created Google Tasks connection overview shows tutorial=con-361 and end_user_id=demo with access/refresh tokens masked. A server-side connection read confirmed the granted scope https://www.googleapis.com/auth/tasks. Only the scope string was emitted; tokens were not printed or copied to public evidence. The connection screenshot is embedded unchanged in the article.
+
+## Final technical recheck
+
+After the article revisions on November 13, TypeScript compilation, all six tests, and Nango tool compilation passed again under Node 24.10.0/npm 11.6.1. A temporary read-only session pinned to the original test connection exposed exactly list-tasklists and list-tasks with the documented argument schemas. Provider read-back verified the existing Acme Walkthrough, Acme Demo, and Acme Playground Check tasks, including their date, presentation URL, and three notes. Calling the custom tool through this read-only session was rejected. No tasks were created or changed, and the session was terminated. This check does not constitute a new product-model run or the skipped fresh-user end-to-end reproduction.
