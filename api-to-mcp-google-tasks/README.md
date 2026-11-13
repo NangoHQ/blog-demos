@@ -28,23 +28,21 @@ Open http://127.0.0.1:3610 and enter the demo username/password in the browser's
 
 Open this folder in Codex. The tutorial uses Codex to edit the source and run the Nango CLI commands below, with integration setup and Google consent in the dashboard.
 
-To install Nango's function-building skill, run this command and select Codex in the installer:
+Install Nango's function-building skill for Codex:
 
 ```bash
-npx skills add NangoHQ/skills -s building-nango-functions
+npx skills add NangoHQ/skills --skill building-nango-functions --agent codex
 ```
 
 Invoke the installed skill as `$building-nango-functions` in a Codex prompt. See the [Nango setup guide](https://nango.dev/docs/getting-started/coding-agent-setup) and [Codex skill documentation](https://learn.chatgpt.com/docs/build-skills).
 
-For optional direct Nango account management through MCP:
+Connect Codex to Nango Management MCP:
 
 ```bash
 codex mcp add nango-management --url https://mcp.nango.dev/mcp
-codex mcp login nango-management
-codex mcp list
 ```
 
-Complete OAuth authorization, then use `/mcp` in Codex to check the connection. Ask Codex to list accessible Nango environments and select `dev`. This optional setup follows the [Codex MCP reference](https://learn.chatgpt.com/docs/extend/mcp?surface=cli); the captured walkthrough used the dashboard and CLI path.
+Complete OAuth authorization. If the add command does not start it, run `codex mcp login nango-management`. Start a new Codex session so it loads the server and skill, then ask it to call `environments_list` and use `dev`. On November 13 this returned dev and prod through the authenticated Management MCP connection. The tutorial keeps runtime sessions separate from Management MCP and uses the Nango CLI for tool compilation and deployment. See the [Codex MCP reference](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
 
 ## Run the integrated agent with read tools
 
@@ -141,3 +139,7 @@ The tutorial GIF uses Acme Walkthrough. Static Nango Logs and Google Tasks captu
 ## Optional Playground check
 
 Open the dev Agent Playground to inspect tool calls independently of the app. The November 12 read run returned six tasks for November 9–15 because custom-tool tests had already added four preparation tasks. A separate approved custom-tool call created Acme Playground; `get-task` read it back. The observed Playground policy allowed all tools, enabled raw proxy access, and lasted one hour. These checks do not establish the app's narrower permissions. The app uses only its allowed `list-tasks` tool for read-back.
+
+The November 13 Playground recording shows both successful read tools and seven matching tasks, including five earlier preparation tasks. The article includes a trimmed native-resolution GIF of this run.
+
+The second November 13 Playground recording creates Acme Playground Check after approval, then uses Get Task for read-back. An independent read-only MCP check verified the persisted task, presentation URL, date, and three notes.

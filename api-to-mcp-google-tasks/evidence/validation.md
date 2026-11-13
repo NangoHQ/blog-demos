@@ -47,7 +47,7 @@ Raw live JSON is ignored because it can contain account identifiers and task dat
 ## Limits and outstanding checks
 
 - Agent Playground reads and custom creation/read-back also passed. Its observed policy used toolset="*", nango_proxy=true, existing pinned connections, and a one-hour expiry. It searched for tools, created Acme Playground after UI approval, and verified it with get-task. This does not validate the app's narrower policy.
-- Codex built and tested the source using the Nango CLI, direct MCP client, and dashboard. Optional Codex Management MCP login and Nango skill installation are documented setup instructions, not steps executed in the captured run. Codex MCP command syntax was checked against the installed CLI and official OpenAI/Nango documentation.
+- Codex built and tested the original source using the Nango CLI, direct MCP client, and dashboard. On November 13, Codex CLI 0.167.0 added Nango Management MCP and completed OAuth login. The authenticated Management MCP environments_list call in this Codex session returned dev (non-production) and prod (production). The official building-nango-functions skill was also installed for Codex in the fresh reproduction checkout. No production resources were modified.
 - The primary app-driven Connect/tag-selection path passed on November 13. The app created the Connect link for the authenticated demo user. Before authorization, chat returned `Google Tasks is not connected.` After the user completed consent, the same app used the tag-selected account and returned seven incomplete tasks for November 9–15 through list-tasklists and list-tasks. The November 18 fixture was excluded. NANGO_CONNECTION_ID was empty in the running process. The November 12 captures use a dashboard test connection.
 - Inclusive/exclusive date boundaries and ambiguous tag matches need separate live tests. The missing-connection case passed on November 13. The tested interior dates do not establish boundary behavior.
 - An empty date range and pagination were tested directly through MCP, not as additional product-model conversations.
@@ -60,3 +60,19 @@ Raw live JSON is ignored because it can contain account identifiers and task dat
 - The added test verifies distinct user tag selectors, rejects cross-user session policies, and prevents another user from inheriting the optional pinned demo account.
 - Validation ran with NANGO_CONNECTION_ID empty and ENABLE_DISCOVERY_PREP=false. The local configuration now keeps these defaults for subsequent restarts.
 - Connect-session creation succeeded through the authenticated app route. The user completed OAuth and the tag-selected product-agent read passed with HTTP 200. Refreshed full-resolution app Connect, seven-task answer, and both successful read-tool call screenshots are included in the article.
+
+## Clean-checkout reproduction scope
+
+On November 13, a new checkout of commit 4daf279 passed npm ci, all six tests, custom-tool compilation, and a live starter-agent request with no integration calls. A new test identity had no matching Google Tasks connection and correctly returned Google Tasks is not connected. The user chose to stop the fresh-user authorization rerun. The existing demo's live reads, custom creation/read-back, and read-only denial remain verified separately; a complete end-to-end live run from the clean checkout is not claimed.
+
+## Playground read recording
+
+The November 13 user recording shows the actual Playground prompt, successful List Tasklists and List Tasks calls, and seven incomplete tasks for November 9–15. It does not show expanded call arguments or the session policy. The article GIF trims idle time, preserves the full 3448×1940 frame, and uses 2× playback. A native-resolution lossless MP4 export is retained alongside it.
+
+## Playground custom-tool recording
+
+The November 13 recording shows the user approving create-customer-discovery-prep for Acme Playground Check, followed by successful custom creation and Get Task read-back. The final answer displays the returned ID, November 13 date, fixed reveal.js presentation URL, and all three preparation notes. A separate read-only MCP list-tasks call then found the same task and verified its stored date, link, and notes. The call cards remain collapsed in the recording; it does not show raw input/output envelopes. The article GIF preserves the full 3446×1938 frame, trims idle time, and runs at 2× speed for 12.53 seconds. Raw verification JSON remains ignored.
+
+## Connection and OAuth scope evidence
+
+The November 13 app-created Google Tasks connection overview shows tutorial=con-361 and end_user_id=demo with access/refresh tokens masked. A server-side connection read confirmed the granted scope https://www.googleapis.com/auth/tasks. Only the scope string was emitted; tokens were not printed or copied to public evidence. The connection screenshot is embedded unchanged in the article.
