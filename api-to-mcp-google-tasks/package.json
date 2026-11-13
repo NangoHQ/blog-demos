@@ -1,0 +1,27 @@
+{
+  "name": "api-to-mcp-google-tasks",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.22.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node --test dist/tests/*.test.js",
+    "starter": "node --env-file=.env dist/src/server.js starter",
+    "start": "node --env-file=.env dist/src/server.js finished",
+    "inspect": "node --env-file=.env dist/src/inspect.js",
+    "verify:live": "node --env-file=.env dist/src/verify-live.js",
+    "compile:tool": "cd integrations && NANGO_CLI_UPGRADE_MODE=ignore nango compile --no-dependency-update --no-telemetry"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "nango": "0.72.4",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "25.0.3",
+    "typescript": "5.9.3"
+  }
+}
