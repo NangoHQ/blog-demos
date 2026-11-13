@@ -1,7 +1,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { timingSafeEqual } from 'node:crypto';
 import { runAgent, type Turn } from './agent.js';
-import { api, demoConnection, openSession, required } from './session.js';
+import { api, connectionForUser, openSession, required } from './session.js';
 const starter = process.argv[2] === 'starter';
 const canCreate = process.env.ENABLE_DISCOVERY_PREP === 'true';
 const port = Number(process.env.PORT || 3610);
@@ -53,7 +53,7 @@ export const server = createServer(async (req, res) => {
     if (req.url === '/api/reset') { if (busy) { send(res, 409, { error: 'Wait for the current question.' }); return; } history = []; send(res, 200, {}); return; }
     if (req.url === '/api/connect' && !starter) {
       if (process.env.NANGO_CONNECTION_ID) { send(res, 409, { error: 'This demo uses the connection configured on the server. Clear NANGO_CONNECTION_ID and restart to use Connect.' }); return; }
-      const connection = demoConnection();
+      const connection = connectionForUser(userId);
       const data = await api('/connect/sessions', 'POST', { tags: connection.tags, allowed_integrations: [connection.integrationId] });
       const link = new URL(data.connect_link);
       if (link.protocol !== 'https:') throw new Error('Invalid Connect link.');
@@ -66,7 +66,7 @@ export const server = createServer(async (req, res) => {
     busy = true;
     try {
       const question = await readQuestion(req);
-      const session = starter ? undefined : await openSession(userId, demoConnection(), canCreate);
+      const session = starter ? undefined : await openSession(userId, connectionForUser(userId), canCreate);
       let result;
       try { result = await runAgent([...history, { role: 'user', content: question }], session?.client); }
       finally { await session?.close().catch(() => console.error('Session cleanup failed; five-minute expiry still applies.')); }

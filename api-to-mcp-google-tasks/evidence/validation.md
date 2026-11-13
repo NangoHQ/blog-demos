@@ -1,6 +1,6 @@
 # Validation record
 
-Test date: November 12, 2026.
+Initial live test date: November 12, 2026. App-Connect revision: November 13, 2026.
 
 ## Environment
 
@@ -48,8 +48,15 @@ Raw live JSON is ignored because it can contain account identifiers and task dat
 
 - Agent Playground reads and custom creation/read-back also passed. Its observed policy used toolset="*", nango_proxy=true, existing pinned connections, and a one-hour expiry. It searched for tools, created Acme Playground after UI approval, and verified it with get-task. This does not validate the app's narrower policy.
 - Codex built and tested the source using the Nango CLI, direct MCP client, and dashboard. Optional Codex Management MCP login and Nango skill installation are documented setup instructions, not steps executed in the captured run. Codex MCP command syntax was checked against the installed CLI and official OpenAI/Nango documentation.
-- The optional app-driven Connect/tag-selection path was not live-tested; the captured path uses a dashboard test connection.
-- Inclusive/exclusive date boundaries, ambiguous tag matches, and missing connections need separate live tests. The tested interior dates do not establish boundary behavior.
+- The primary app-driven Connect/tag-selection path passed on November 13. The app created the Connect link for the authenticated demo user. Before authorization, chat returned `Google Tasks is not connected.` After the user completed consent, the same app used the tag-selected account and returned seven incomplete tasks for November 9–15 through list-tasklists and list-tasks. The November 18 fixture was excluded. NANGO_CONNECTION_ID was empty in the running process. The November 12 captures use a dashboard test connection.
+- Inclusive/exclusive date boundaries and ambiguous tag matches need separate live tests. The missing-connection case passed on November 13. The tested interior dates do not establish boundary behavior.
 - An empty date range and pagination were tested directly through MCP, not as additional product-model conversations.
 - The sample is a single-user localhost application. Production identity, durable conversation storage, and application authorization need adaptation.
 - The locked install reports five dependency audit findings (one low, three moderate, one high). They are not remediated here; review applicability before deployment.
+
+## November 13 revision checks
+
+- TypeScript build and all six local tests passed after making authenticated identity explicit in both Connect and chat routes.
+- The added test verifies distinct user tag selectors, rejects cross-user session policies, and prevents another user from inheriting the optional pinned demo account.
+- Validation ran with NANGO_CONNECTION_ID empty and ENABLE_DISCOVERY_PREP=false. The local configuration now keeps these defaults for subsequent restarts.
+- Connect-session creation succeeded through the authenticated app route. The user completed OAuth and the tag-selected product-agent read passed with HTTP 200. Refreshed full-resolution app Connect, seven-task answer, and both successful read-tool call screenshots are included in the article.

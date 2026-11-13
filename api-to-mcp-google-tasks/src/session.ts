@@ -44,6 +44,16 @@ export async function listTools(client: Client) {
   } while (cursor);
   return tools;
 }
+export function connectionForUser(userId: string): Connection {
+  if (!userId) throw new Error('An authenticated user is required.');
+  const integrationId = process.env.NANGO_INTEGRATION_ID || 'google-tasks';
+  // Optional legacy test connection belongs only to the configured demo user.
+  if (process.env.NANGO_CONNECTION_ID) {
+    if (userId !== required('DEMO_USERNAME')) throw new Error('No authorized Google Tasks connection for this user.');
+    return { userId, integrationId, connectionId: process.env.NANGO_CONNECTION_ID };
+  }
+  return { userId, integrationId, tags: { tutorial: 'con-361', end_user_id: userId } };
+}
 export function demoConnection(): Connection {
-  return { userId: required('DEMO_USERNAME'), integrationId: process.env.NANGO_INTEGRATION_ID || 'google-tasks', ...(process.env.NANGO_CONNECTION_ID ? { connectionId: process.env.NANGO_CONNECTION_ID } : { tags: { tutorial: 'con-361', end_user_id: required('DEMO_USERNAME') } }) };
+  return connectionForUser(required('DEMO_USERNAME'));
 }

@@ -2,7 +2,7 @@
 
 A Google Tasks agent built with Nango Agent Sessions and a custom discovery-preparation tool. `npm run starter` starts an agent without integrations. `npm start` runs the same interface with a server-created Nango Agent Session. The product agent uses OpenAI; Codex was used to build and test the integration with the Nango CLI and dashboard.
 
-**Verified November 12, 2026:** local tests and compilation, managed OAuth, model reads and custom-tool writes, provider read-back, live read-only denial, pagination, and an empty date range. See [evidence/validation.md](evidence/validation.md) for the exact scope and remaining checks. This is a local demonstration, not a production application.
+**Verified November 12–13, 2026:** local tests and compilation, managed OAuth through the dashboard and app-driven Connect, model reads and custom-tool writes, provider read-back, live read-only denial, pagination, and an empty date range. See [evidence/validation.md](evidence/validation.md) for the exact scope and remaining checks. This is a local demonstration, not a production application.
 
 ## Install and run the starter
 
@@ -48,17 +48,19 @@ Complete OAuth authorization, then use `/mcp` in Codex to check the connection. 
 
 ## Run the integrated agent with read tools
 
-In the Nango dashboard, create the `google-tasks` integration with the Nango-managed OAuth app and its `https://www.googleapis.com/auth/tasks` scope. Open **Connections**, choose **Add test connection**, and complete Google consent with your controlled account.
+In the Nango dashboard, create the `google-tasks` integration with the Nango-managed OAuth app and its `https://www.googleapis.com/auth/tasks` scope.
 
-Set `NANGO_API_KEY` to a dev Environment API key with `environment:agent_sessions:write`. Copy the new connection ID to `NANGO_CONNECTION_ID` in `.env`. The server assigns this test connection to the authenticated demo user. Keep `ENABLE_DISCOVERY_PREP=false`. Stop the starter and run:
+Set `NANGO_API_KEY` to a dev Environment API key with `environment:connect_sessions:write` and `environment:agent_sessions:write`. Leave `NANGO_CONNECTION_ID` empty and keep `ENABLE_DISCOVERY_PREP=false`. Stop the optional starter and run:
 
 ```bash
 npm start
 ```
 
-This is the connection flow used in the tutorial captures. The **Connect Google Tasks** button remains visible but cannot create another connection while `NANGO_CONNECTION_ID` is set.
+Sign in at http://127.0.0.1:3610. Click **Connect Google Tasks**, open **Authorize Google Tasks, then return here**, and complete Google consent and Nango Connect. Return to the app to ask about tasks.
 
-To use the optional app-driven Connect flow instead, clear `NANGO_CONNECTION_ID`, also grant `environment:connect_sessions:write`, and restart. Click **Connect Google Tasks** and complete the returned authorization link. The backend sets tags `tutorial=con-361` and `end_user_id=<authenticated demo username>` and selects the connection using those tags. Create only one connection for that pair; multiple matches are ambiguous. This alternative flow was not part of the recorded validation.
+Both Connect and chat routes call `connectionForUser(userId)` using the authenticated identity. It derives `tutorial=con-361` and `end_user_id=<authenticated username>` tags on the server. Connect copies those tags onto the connection; the Agent Session uses the same selector with an explicit tool allowlist. Create only one connection for that pair; multiple matches are ambiguous. A production app supporting multiple accounts should save connection IDs and verify ownership when selecting one.
+
+For an isolated dashboard test instead, choose **Connections → Add test connection** and set `NANGO_CONNECTION_ID` to its ID. That connection belongs only to `DEMO_USERNAME` in this sample. The Connect button refuses to create another connection while this override is set. The November 12 captures used this pinned path. The app-driven Connect and tag-selected read passed on November 13; see [evidence/validation.md](evidence/validation.md).
 
 ```bash
 npm run inspect
@@ -132,6 +134,10 @@ The verifier checks returned fields, reads back the matching task ID through `li
 - `src/verify-live.ts`: live positive-control/denial check (explicit opt-in write).
 - `tests/contracts.test.ts`: local validation and authorization-policy tests.
 
-For production, use your application's authentication, persist each user's authorized connection and access decisions, and replace the single-user in-memory conversation state. Keep provider credentials in Nango. The demonstration's five-minute sessions limit the lifetime of access; the backend also attempts termination after each question and logs cleanup failures. Termination does not cancel an in-flight call. A failed model request after a write does not undo that write.
+For production, use your application's authentication, derive connection selectors from authenticated identity (or persist owned connection IDs), apply per-user access decisions, and replace the single-user in-memory conversation state. Keep provider credentials in Nango. The demonstration's five-minute sessions limit the lifetime of access; the backend also attempts termination after each question and logs cleanup failures. Termination does not cancel an in-flight call. A failed model request after a write does not undo that write.
 
 The tutorial GIF uses Acme Walkthrough. Static Nango Logs and Google Tasks captures use Acme Demo from the direct verifier. Dry-run and rehearsal tasks have distinct names; repeated runs can add more tasks to the controlled list.
+
+## Optional Playground check
+
+Open the dev Agent Playground to inspect tool calls independently of the app. The November 12 read run returned six tasks for November 9–15 because custom-tool tests had already added four preparation tasks. A separate approved custom-tool call created Acme Playground; `get-task` read it back. The observed Playground policy allowed all tools, enabled raw proxy access, and lasted one hour. These checks do not establish the app's narrower permissions. The app uses only its allowed `list-tasks` tool for read-back.
