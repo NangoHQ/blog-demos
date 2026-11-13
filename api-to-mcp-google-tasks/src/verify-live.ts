@@ -64,7 +64,7 @@ try {
     assert.match(denial, /unknown.?tool|tool.*not found|tool.*not.*(allowed|available)|not.*(allowed|available).*tool/i);
     await writeFile('evidence/live-custom-and-denial.json', JSON.stringify({ checkedAt: new Date().toISOString(), task, readBack: found, denial }, null, 2));
     console.log('Custom task created and read back with fixed notes. Original read-only session rejected the write tool.');
-    console.log('Next: compare in Google Tasks, then record the product-agent and Playground runs.');
+    console.log('Open Google Tasks to inspect the created task.');
     console.log(JSON.stringify(task, null, 2));
   } finally { await write.close(); }
 } finally { await read.close(); }
